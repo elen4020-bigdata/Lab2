@@ -7,6 +7,28 @@
 
 using namespace std;
 
+void blockThreading(shared_ptr<vector<shared_ptr<vector<int32_t>>>> A){
+	
+	int bSize = 2;
+
+	for(auto i = 0; i < A -> size(); i+=bSize){
+		//cout << i << ": ";
+		for(auto j = (i + bSize); j < A -> size(); j+=bSize){
+			//cout << j << " ";
+
+			for(auto a = 0; a < bSize; a++){
+				for(auto b = 0; b < bSize; b++){
+					A -> at(i+a) -> at(j+b) = A -> at(i+a) -> at(j+b) + A -> at(j+b) -> at(i+a);
+					A -> at(j+b) -> at(i+a) = A -> at(i+a) -> at(j+b) - A -> at(j+b) -> at(i+a);
+					A -> at(i+a) -> at(j+b) = A -> at(i+a) -> at(j+b) - A -> at(j+b) -> at(i+a);
+				}
+			}
+
+		}
+		cout << endl;
+	}
+}
+
 
 void transpose(shared_ptr<vector<shared_ptr<vector<int32_t>>>> A){
 	for(auto i = 0; i < A -> size(); i++){
@@ -17,8 +39,6 @@ void transpose(shared_ptr<vector<shared_ptr<vector<int32_t>>>> A){
 		}
 	}
 }
-
-
 
 class DimensionsHaveToBeNonZeroPositiveIntegersException{};
 
@@ -53,9 +73,18 @@ shared_ptr<vector<shared_ptr<vector<int32_t>>>> Generate2DArray(int32_t n){
 }
 
 int main(){
+	auto n = 6;
+    auto A = Generate2DArray(n);
+	blockThreading(A);
+    /*transpose(A);*/
+	cout<<endl;
 
-    auto A = Generate2DArray(4);
-    matrixTranspose(A);
+	for (auto i = 0; i < n ; i++){
+        for(auto j = 0; j < n ; j++){
+            cout << A->at(i)->at(j) << " ";
+        }
+        cout <<endl;
+    }
 
     return 0;
 }
