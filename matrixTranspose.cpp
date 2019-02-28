@@ -12,21 +12,24 @@ void blockThreading(shared_ptr<vector<shared_ptr<vector<int32_t>>>> A){
 	int bSize = 2;
 
 	for(auto i = 0; i < A -> size(); i+=bSize){
-		//cout << i << ": ";
 		for(auto j = (i + bSize); j < A -> size(); j+=bSize){
-			//cout << j << " ";
-
 			for(auto a = 0; a < bSize; a++){
 				for(auto b = 0; b < bSize; b++){
-					A -> at(i+a) -> at(j+b) = A -> at(i+a) -> at(j+b) + A -> at(j+b) -> at(i+a);
-					A -> at(j+b) -> at(i+a) = A -> at(i+a) -> at(j+b) - A -> at(j+b) -> at(i+a);
-					A -> at(i+a) -> at(j+b) = A -> at(i+a) -> at(j+b) - A -> at(j+b) -> at(i+a);
+					A -> at(i+a) -> at(j+b) = A -> at(i+a) -> at(j+b) + A -> at(j+a) -> at(i+b);
+					A -> at(j+a) -> at(i+b) = A -> at(i+a) -> at(j+b) - A -> at(j+a) -> at(i+b);
+					A -> at(i+a) -> at(j+b) = A -> at(i+a) -> at(j+b) - A -> at(j+a) -> at(i+b);
 				}
 			}
-
 		}
-		cout << endl;
 	}
+
+    for(auto i = 0; i < A -> size(); i+=bSize){
+		for(auto j = 0; j < A -> size(); j+=bSize){
+            A -> at(i+1) -> at(j) = A -> at(i+1) -> at(j) + A -> at(i) -> at(j+1);
+			A -> at(i) -> at(j+1) = A -> at(i+1) -> at(j) - A -> at(i) -> at(j+1);
+			A -> at(i+1) -> at(j) = A -> at(i+1) -> at(j) - A -> at(i) -> at(j+1);
+        }
+    }
 }
 
 
