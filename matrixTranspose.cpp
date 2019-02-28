@@ -21,15 +21,20 @@ void blockThreading(shared_ptr<vector<shared_ptr<vector<int32_t>>>> A){
 				}
 			}
 		}
+        for(auto c = 0; c < A -> size(); c+=bSize){
+            A -> at(i+1) -> at(c) = A -> at(i+1) -> at(c) + A -> at(i) -> at(c+1);
+		    A -> at(i) -> at(c+1) = A -> at(i+1) -> at(c) - A -> at(i) -> at(c+1);
+		    A -> at(i+1) -> at(c) = A -> at(i+1) -> at(c) - A -> at(i) -> at(c+1);
+        }
 	}
 
-    for(auto i = 0; i < A -> size(); i+=bSize){
+/*     for(auto i = 0; i < A -> size(); i+=bSize){
 		for(auto j = 0; j < A -> size(); j+=bSize){
             A -> at(i+1) -> at(j) = A -> at(i+1) -> at(j) + A -> at(i) -> at(j+1);
 			A -> at(i) -> at(j+1) = A -> at(i+1) -> at(j) - A -> at(i) -> at(j+1);
 			A -> at(i+1) -> at(j) = A -> at(i+1) -> at(j) - A -> at(i) -> at(j+1);
         }
-    }
+    } */
 }
 
 
