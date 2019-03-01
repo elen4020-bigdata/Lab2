@@ -8,23 +8,24 @@
 
 using namespace std;
 
-#define NUM_THREADS 8
+#define NUM_THREADS 4
 
 struct thread_data{
 	shared_ptr<vector<shared_ptr<vector<int32_t>>>> A;
 };
 
-void transpose(void *threadarg){
+void *transpose(void *threadarg){
 	struct thread_data *data;
 	data = (struct thread_data *) threadarg;
-	auto A = data->A;
-	for(auto i = 0; i < A -> size(); i++){
-		for(auto j = (i + 1); j < A -> size(); j++){
-			A -> at(i) -> at(j) = A -> at(i) -> at(j) + A -> at(j) -> at(i);
-			A -> at(j) -> at(i) = A -> at(i) -> at(j) - A -> at(j) -> at(i);
-			A -> at(i) -> at(j) = A -> at(i) -> at(j) - A -> at(j) -> at(i);
+	//auto A = data -> A;
+	for(auto i = 0; i < data ->A -> size(); i++){
+		for(auto j = (i + 1); j < data -> A -> size(); j++){
+			data -> A -> at(i) -> at(j) = data ->A -> at(i) -> at(j) + data ->A -> at(j) -> at(i);
+			data ->A -> at(j) -> at(i) = data ->A -> at(i) -> at(j) - data ->A -> at(j) -> at(i);
+			data ->A -> at(i) -> at(j) = data ->A -> at(i) -> at(j) - data ->A -> at(j) -> at(i);
 		}
 	}
+    pthread_exit(NULL);
 }
 
 
@@ -67,12 +68,30 @@ int main(){
 
     pthread_t threads[NUM_THREADS];
     int rc;
-    struct thread_data data[NUM_THREADS];
+    struct thread_data data;
+    void *status;
+    pthread_attr_t attr;
+    data.A = A;
+
+    pthread_attr_init(&attr);
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 
     for(auto i = 0; i < NUM_THREADS; i++){
-	rc = pthread_create(&threads[i], NULL, transpose, (void*)&data[i]);
+	    rc = pthread_create(&threads[i], NULL, transpose, (void*)&data);
     }
     //matrixTranspose(A);
-
+    pthread_attr_destroy(&attr);
+    for(auto i = 0; i < NUM_THREADS; i++){
+	    rc = pthread_join(threads[i], &status);
+    }
+    cout << endl;
+    for (auto i = 0; i < 4 ; i++){
+        for(auto j = 0; j < 4 ; j++){
+            cout << data.A->at(i)->at(j) << " ";
+        }
+        cout <<endl;
+    }
+    pthread_exit(NULL);
+    
     return 0;
 }
