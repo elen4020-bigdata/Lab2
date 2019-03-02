@@ -7,6 +7,7 @@
 
 using namespace std;
 
+
 void blockThreading(shared_ptr<vector<shared_ptr<vector<int32_t>>>> A){
 	
 	int bSize = 2;
@@ -20,25 +21,27 @@ void blockThreading(shared_ptr<vector<shared_ptr<vector<int32_t>>>> A){
 					A -> at(i+a) -> at(j+b) = A -> at(i+a) -> at(j+b) - A -> at(j+a) -> at(i+b);
 				}
 			}
-		}
-        for(auto c = 0; c < A -> size(); c+=bSize){
-            A -> at(i+1) -> at(c) = A -> at(i+1) -> at(c) + A -> at(i) -> at(c+1);
-		    A -> at(i) -> at(c+1) = A -> at(i+1) -> at(c) - A -> at(i) -> at(c+1);
-		    A -> at(i+1) -> at(c) = A -> at(i+1) -> at(c) - A -> at(i) -> at(c+1);
-        }
-	}
+            //Transpose inner blocks after they have been moved
+            for(auto c = 0; c < bSize; c++){
+                A -> at((j+1)*c-i*(c-1))->at((c-1)*(-j-1)+c*i) =  A -> at((j+1)*c-i*(c-1))->at((c-1)*(-j-1)+c*i) 
+                + A->at(c*(j-1)+1-i*(c-1))->at(c*i+1-(c-1)*(j-1));
 
-/*     for(auto i = 0; i < A -> size(); i+=bSize){
-		for(auto j = 0; j < A -> size(); j+=bSize){
-            A -> at(i+1) -> at(j) = A -> at(i+1) -> at(j) + A -> at(i) -> at(j+1);
-			A -> at(i) -> at(j+1) = A -> at(i+1) -> at(j) - A -> at(i) -> at(j+1);
-			A -> at(i+1) -> at(j) = A -> at(i+1) -> at(j) - A -> at(i) -> at(j+1);
-        }
-    } */
+                A -> at(c*(j-1)+1-i*(c-1))->at(c*i+1-(c-1)*(j-1)) =  A -> at((j+1)*c-i*(c-1))->at((c-1)*(-j-1)+c*i) 
+                - A->at(c*(j-1)+1-i*(c-1))->at(c*i+1-(c-1)*(j-1));
+
+                A -> at((j+1)*c-i*(c-1))->at((c-1)*(-j-1)+c*i) =  A -> at((j+1)*c-i*(c-1))->at((c-1)*(-j-1)+c*i) 
+                - A->at(c*(j-1)+1-i*(c-1))->at(c*i+1-(c-1)*(j-1));
+            }
+		}
+        //Transpose the diagonal
+        A -> at(i)->at(i+1) = A -> at(i)->at(i+1) + A -> at(i+1)->at(i);
+        A -> at(i+1)->at(i) = A -> at(i)->at(i+1) - A -> at(i+1)->at(i);
+        A -> at(i)->at(i+1) = A -> at(i)->at(i+1) - A -> at(i+1)->at(i);
+	 }
 }
 
 
-void transpose(shared_ptr<vector<shared_ptr<vector<int32_t>>>> A){
+void transpose(shared_ptr<vector<shared_ptr<vector<int32_t>>>> A) {
 	for(auto i = 0; i < A -> size(); i++){
 		for(auto j = (i + 1); j < A -> size(); j++){
 			A -> at(i) -> at(j) = A -> at(i) -> at(j) + A -> at(j) -> at(i);
@@ -81,7 +84,7 @@ shared_ptr<vector<shared_ptr<vector<int32_t>>>> Generate2DArray(int32_t n){
 }
 
 int main(){
-	auto n = 6;
+	auto n = 8;
     auto A = Generate2DArray(n);
 	blockThreading(A);
     /*transpose(A);*/
