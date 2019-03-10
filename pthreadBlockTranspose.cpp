@@ -7,7 +7,7 @@
 #include <pthread.h>
 
 using namespace std;
-
+using namespace std::chrono;
 
 /*void blockThreading(shared_ptr<vector<shared_ptr<vector<int32_t>>>> A){
 	
@@ -125,6 +125,8 @@ void PBlockThreading(shared_ptr<vector<shared_ptr<vector<int32_t>>>> A){
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 
     int threadCounter = 0;
+    
+    high_resolution_clock::time_point t1 = high_resolution_clock::now();
 
     for(auto i = 0; i < A -> size(); i+=2){
 		for(auto j = (i + 2); j < A -> size(); j+=2){
@@ -144,6 +146,10 @@ void PBlockThreading(shared_ptr<vector<shared_ptr<vector<int32_t>>>> A){
         printf("Created Diagonal Thread\n");
         threadCounter++;
     }
+
+    high_resolution_clock::time_point t2 = high_resolution_clock::now();
+    duration<double> time_span = duration_cast<duration<double>>(t2 - t1);
+    std::cout << "The operation took: " << time_span.count() << " seconds.";
 
     pthread_attr_destroy(&attr);
     for(auto i = 0; i < numthreads; i++){

@@ -6,10 +6,10 @@
 #include <iostream>
 
 using namespace std;
-
+using namespace std::chrono;
 
 void blockThreading(shared_ptr<vector<shared_ptr<vector<int32_t>>>> A){
-	
+    high_resolution_clock::time_point t1 = high_resolution_clock::now();
 	int bSize = 2;
 
 	for(auto i = 0; i < A -> size(); i+=bSize){
@@ -38,6 +38,10 @@ void blockThreading(shared_ptr<vector<shared_ptr<vector<int32_t>>>> A){
         A -> at(i+1)->at(i) = A -> at(i)->at(i+1) - A -> at(i+1)->at(i);
         A -> at(i)->at(i+1) = A -> at(i)->at(i+1) - A -> at(i+1)->at(i);
 	 }
+     high_resolution_clock::time_point t2 = high_resolution_clock::now();
+     duration<double> time_span = duration_cast<duration<double>>(t2 - t1);
+     std::cout << "The operation took: " << time_span.count() << " seconds.";
+
 }
 
 
@@ -76,25 +80,25 @@ shared_ptr<vector<shared_ptr<vector<int32_t>>>> Generate2DArray(int32_t n){
     
     for (auto i = 0; i < n ; i++){
         for(auto j = 0; j < n ; j++){
-            cout << A->at(i)->at(j) << " ";
+            //cout << A->at(i)->at(j) << " ";
         }
-        cout <<endl;
+        //cout <<endl;
     }
     return A;
 }
 
 int main(){
-	auto n = 8;
+	auto n = 128;
     auto A = Generate2DArray(n);
 	blockThreading(A);
     /*transpose(A);*/
-	cout<<endl;
+	//cout<<endl;
 
 	for (auto i = 0; i < n ; i++){
         for(auto j = 0; j < n ; j++){
-            cout << A->at(i)->at(j) << " ";
+            //cout << A->at(i)->at(j) << " ";
         }
-        cout <<endl;
+        //cout <<endl;
     }
 
     return 0;
