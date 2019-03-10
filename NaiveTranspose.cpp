@@ -8,11 +8,9 @@
 using namespace std;
 using namespace std::chrono;
 
-
 void transpose(shared_ptr<vector<shared_ptr<vector<int32_t>>>> A){
     high_resolution_clock::time_point t1 = high_resolution_clock::now();
 	for(auto i = 0; i < A -> size(); i++){
-		#pragma omp parallel for
 		for(auto j = (i + 1); j < A -> size(); j++){
 			A -> at(i) -> at(j) = A -> at(i) -> at(j) + A -> at(j) -> at(i);
 			A -> at(j) -> at(i) = A -> at(i) -> at(j) - A -> at(j) -> at(i);
@@ -53,26 +51,17 @@ shared_ptr<vector<shared_ptr<vector<int32_t>>>> Generate2DArray(int32_t n){
     
     for (auto i = 0; i < n ; i++){
         for(auto j = 0; j < n ; j++){
-            cout << A->at(i)->at(j) << " ";
+            //cout << A->at(i)->at(j) << " ";
         }
-        cout <<endl;
+        //cout <<endl;
     }
     return A;
 }
 
 int main(){
 
-    	auto A = Generate2DArray(10);
-    	transpose(A);
+    auto A = Generate2DArray(128);
+    transpose(A);
 
-	cout << endl;
-
-	for(auto i = 0; i < A->size(); i++){
-		for(auto j = 0; j < A ->size(); j++){
-			cout << A -> at(i) -> at(j) << " ";
-		}
-		cout << endl;
-	}
-
-    	return 0;
+    return 0;
 }

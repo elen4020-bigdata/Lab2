@@ -7,6 +7,7 @@
 #include <pthread.h>
 
 using namespace std;
+using namespace std::chrono;
 
 struct thread_data{
     int row;
@@ -39,6 +40,7 @@ void transpose(shared_ptr<vector<shared_ptr<vector<int32_t>>>> A){
 		data[i].A = A;
 		data[i].row = i;
 	}
+    high_resolution_clock::time_point t1 = high_resolution_clock::now();
 	for(auto i = 0; i < A -> size(); i++){
         //cout << "i in loop = " << i << endl;
 		rc = pthread_create(&threads[i], NULL, diagonal, (void*)&data[i]);
@@ -48,7 +50,12 @@ void transpose(shared_ptr<vector<shared_ptr<vector<int32_t>>>> A){
     	for(auto i = 0; i < A -> size(); i++){
 	    	rc = pthread_join(threads[i], &status);
     	}
-    	cout << "completed transpose" << endl;
+    cout << "completed transpose" << endl;
+    high_resolution_clock::time_point t2 = high_resolution_clock::now();
+
+    duration<double> time_span = duration_cast<duration<double>>(t2 - t1);
+
+    std::cout << "The operation took: " << time_span.count() << " seconds.";
 }
 
 class DimensionsHaveToBeNonZeroPositiveIntegersException{};

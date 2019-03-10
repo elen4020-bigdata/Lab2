@@ -6,9 +6,11 @@
 #include <iostream>
 
 using namespace std;
+using namespace std::chrono;
 
 
 void transpose(shared_ptr<vector<shared_ptr<vector<int32_t>>>> A){
+    high_resolution_clock::time_point t1 = high_resolution_clock::now();
 	#pragma omp parallel for
 	for(auto i = 0; i < A -> size(); i++){
 		#pragma omp parallel for
@@ -18,6 +20,11 @@ void transpose(shared_ptr<vector<shared_ptr<vector<int32_t>>>> A){
 			A -> at(i) -> at(j) = A -> at(i) -> at(j) - A -> at(j) -> at(i);
 		}
 	}
+    high_resolution_clock::time_point t2 = high_resolution_clock::now();
+
+    duration<double> time_span = duration_cast<duration<double>>(t2 - t1);
+
+    std::cout << "The operation took: " << time_span.count() << " seconds.";
 }
 
 
