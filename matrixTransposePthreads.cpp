@@ -79,48 +79,23 @@ shared_ptr<vector<shared_ptr<vector<int32_t>>>> Generate2DArray(int32_t n){
         }
         
     }
-
-    
-    for (auto i = 0; i < n ; i++){
-        for(auto j = 0; j < n ; j++){
-            cout << A->at(i)->at(j) << " ";
-        }
-        cout <<endl;
-    }
     return A;
 }
 
 int main(){
 
-    auto A = Generate2DArray(1000);
+    int sizes[5] = {128, 1024, 2048, 4096, 16384};
+	auto count = 0;
+	while(count < 5){
+		auto n = sizes[count];
+		cout << "Matrix size: " << n << endl; 
+		auto A = Generate2DArray(n);
 
-    /*pthread_t threads[NUM_THREADS];
-    int rc;
-    struct thread_data data;
-    void *status;
-    pthread_attr_t attr;
-    data.A = A;*/
-
-    /*pthread_attr_init(&attr);
-    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);*/
-/*
-    for(auto i = 0; i < NUM_THREADS; i++){
-	    rc = pthread_create(&threads[i], NULL, transpose, (void*)&data);
-    }
-    //matrixTranspose(A);
-    pthread_attr_destroy(&attr);
-    for(auto i = 0; i < NUM_THREADS; i++){
-	    rc = pthread_join(threads[i], &status);
-    }*/
-    transpose(A);
-    cout << "back in main" << endl;
-    cout << endl;
-    for (auto i = 0; i < 1000 ; i++){
-        for(auto j = 0; j < 1000 ; j++){
-            cout << A->at(i)->at(j) << " ";
-        }
-        cout <<endl;
-    }
+		transpose(A);
+		cout << endl;
+	    count++;
+	}
+    
     pthread_exit(NULL);
     return 0;
 }

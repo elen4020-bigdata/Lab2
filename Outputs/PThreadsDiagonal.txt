@@ -1,0 +1,12 @@
+g++ -pthread matrixTransposePthreads.cpp -o matrixTransposePthreads
+
+Matrix size: 128
+The PThreads Diagonal operation took: 0.00576401 seconds.
+Matrix size: 1024
+The PThreads Diagonal operation took: 0.0519779 seconds.
+Matrix size: 2048
+The PThreads Diagonal operation took: 0.181144 seconds.
+Matrix size: 4096
+The PThreads Diagonal operation took: 0.633397 seconds.
+Matrix size: 16384
+The PThreads Diagonal operation took: 9.52182 seconds.

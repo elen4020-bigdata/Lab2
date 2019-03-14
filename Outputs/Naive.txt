@@ -1,0 +1,28 @@
+g++ (Ubuntu 8.2.0-1ubuntu2~18.04) 8.2.0
+Copyright (C) 2018 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+g++ matrixTranspose.cpp -O3 -o matrixTranspose
+
+Matrix size: 128
+The Non-threaded Naive operation took: 5.4551e-05 seconds.
+Matrix size: 1024
+The Non-threaded Naive operation took: 0.00321442 seconds.
+Matrix size: 2048
+The Non-threaded Naive operation took: 0.0185349 seconds.
+Matrix size: 4096
+The Non-threaded Naive operation took: 0.0860447 seconds.
+
+g++ matrixTranspose.cpp -O2 -o matrixTranspose
+
+Matrix size: 128
+The Non-threaded Naive operation took: 5.5828e-05 seconds.
+Matrix size: 1024
+The Non-threaded Naive operation took: 0.00378081 seconds.
+Matrix size: 2048
+The Non-threaded Naive operation took: 0.0210782 seconds.
+Matrix size: 4096
+The Non-threaded Naive operation took: 0.0888543 seconds.
+Matrix size: 16384
+The Non-threaded Naive operation took: 1.70362 seconds.

@@ -1,0 +1,38 @@
+g++ -fopenmp -lgomp OpenMP.cpp -O2 -o OpenMP
+./OpenMP
+
+Matrix size: 128
+The OpenMP Naive threading operation took: 0.000967885 seconds.
+The OpenMP Diagonal threading operation took: 0.000458803 seconds.
+The OpenMP Block threading operation took: 0.00202206 seconds.
+Matrix size: 1024
+The OpenMP Naive threading operation took: 0.00132091 seconds.
+The OpenMP Diagonal threading operation took: 0.00186558 seconds.
+The OpenMP Block threading operation took: 0.0482613 seconds.
+Matrix size: 2048
+The OpenMP Naive threading operation took: 0.00622422 seconds.
+The OpenMP Diagonal threading operation took: 0.00662266 seconds.
+The OpenMP Block threading operation took: 0.191808 seconds.
+Matrix size: 4096
+The OpenMP Naive threading operation took: 0.0255817 seconds.
+The OpenMP Diagonal threading operation took: 0.0249273 seconds.
+The OpenMP Block threading operation took: 0.776985 seconds.
+Matrix size: 16384
+The OpenMP Naive threading operation took: 1.28722 seconds.
+The OpenMP Diagonal threading operation took: 0.610463 seconds.
+The OpenMP Block threading operation took: 13.7311 seconds.
+
+
+
+g++ matrixTranspose.cpp -O2 -o matrixTranspose
+./matrixTranspose
+Matrix size: 128
+The Non-threaded Naive operation took: 5.3968e-05 seconds.
+Matrix size: 1024
+The Non-threaded Naive operation took: 0.00322524 seconds.
+Matrix size: 2048
+The Non-threaded Naive operation took: 0.0190198 seconds.
+Matrix size: 4096
+The Non-threaded Naive operation took: 0.0872058 seconds.
+Matrix size: 16384
+The Non-threaded Naive operation took: 1.72099 seconds.
