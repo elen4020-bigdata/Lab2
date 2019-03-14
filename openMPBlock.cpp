@@ -40,17 +40,6 @@ void blockThreading(shared_ptr<vector<shared_ptr<vector<int32_t>>>> A){
     std::cout << "The operation took: " << time_span.count() << " seconds.";
 }
 
-
-void transpose(shared_ptr<vector<shared_ptr<vector<int32_t>>>> A){
-	for(auto i = 0; i < A -> size(); i++){
-		for(auto j = (i + 1); j < A -> size(); j++){
-			A -> at(i) -> at(j) = A -> at(i) -> at(j) + A -> at(j) -> at(i);
-			A -> at(j) -> at(i) = A -> at(i) -> at(j) - A -> at(j) -> at(i);
-			A -> at(i) -> at(j) = A -> at(i) -> at(j) - A -> at(j) -> at(i);
-		}
-	}
-}
-
 class DimensionsHaveToBeNonZeroPositiveIntegersException{};
 
 shared_ptr<vector<shared_ptr<vector<int32_t>>>> Generate2DArray(int32_t n){
@@ -87,7 +76,6 @@ int main(){
 	auto n = 6;
     auto A = Generate2DArray(n);
 	blockThreading(A);
-    /*transpose(A);*/
 	cout<<endl;
 
 	for (auto i = 0; i < n ; i++){
