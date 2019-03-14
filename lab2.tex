@@ -10,31 +10,20 @@
 \centerline{ Anita de Mello Koch - 1371116,} 
 \centerline{Nicholas Kastanos - 1393410}}}
 
-\section{3-D Array Multiplication}
+\section{Comparisons between openmp and Pthreads}
 
-To obtain each element in matrix $C$, matrix $A$ and $B$ are divided into two-dimensional matrices, $A'$ and $B'$ as can be seen in figure \ref{3DMult}.
-For each two-dimensional matrix, a single row and column is multiplied to get the corresponding element in the $C$ matrix.
-This leads to a single value which is the element in the $C$ matrix.
-This is done for all elements in the $C$ matrix.
-
-
-Two \texttt{for} loops were used to maintain the row and column of the current element in matrix $C$.
-Another \texttt{for} loop was used to traverse the depth of the matrix $C$.
-The row $a$ and column $b$ were then obtained from matrices $A$ and $B$ as seen in figure \ref{3DMult}.
-Vector multiplication was then used on vectors $a$ and $b$.
-The resulting value is the corresponding element of $C$.
-
-This was repeated for all elements in matrix $C$.
-It was assumed matrix $A$ and $B$ are cubes.
-
-\section{Generalizing for $N$ dimensions}
-
-To multiply a multi-dimensional array of $N$ dimensions, a recursive function can be used.
-
-This can be done by inputting the two $N$ dimensional arrays and the value $N$.
-For the two, multi-dimensional arrays, extract a single plane and call the function on these $N-1$ multi-dimensional arrays.
-This process is continued until a single vector remains from each matrix.
-The vector product of these two vectors is the result of the corresponding element in the resultant $N$ multi-dimensional array.
+\begin{center}
+\begin{tabular}{| p{2cm} | p{2cm} | p{2cm} | p{2cm} | p{2cm} | p{2cm} | p{2cm} |}
+\hline
+ $N_{0}=N_{1}$  & Basic & Pthread -  Diagonal & Pthreads - Blocked&OpenMP - Naive& OpenMP - Diagonal & OpenMP - Blocked\\ \hline
+ 128 &  &  &&&&\\  
+ 1024 &  &  &&&&\\
+ 2048&  &  &&&&\\
+ 4096 &  &  &&&&\\
+ 16384 &  &  &&&&\\
+ \hline    
+\end{tabular}
+\end{center}
 
 \section{Pseudocode}
 
