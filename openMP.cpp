@@ -75,7 +75,7 @@ void transposeDiagonal(shared_ptr<vector<shared_ptr<vector<int32_t>>>> A){
 void transposeBlock(shared_ptr<vector<shared_ptr<vector<int32_t>>>> A){
 	high_resolution_clock::time_point t1 = high_resolution_clock::now();
 	int bSize = 2;
-
+	#pragma opm parallel for
 	for(auto i = 0; i < A -> size(); i+=bSize){
 		for(auto j = (i + bSize); j < A -> size(); j+=bSize){
 			#pragma opm parallel for
@@ -88,7 +88,7 @@ void transposeBlock(shared_ptr<vector<shared_ptr<vector<int32_t>>>> A){
 			}
 		}
 	}
-
+#pragma opm parallel for
     for(auto i = 0; i < A -> size(); i+=bSize){
 		#pragma opm parallel for
 		for(auto j = 0; j < A -> size(); j+=bSize){
@@ -106,19 +106,26 @@ void transposeBlock(shared_ptr<vector<shared_ptr<vector<int32_t>>>> A){
 
 int main(){
 
-    auto A = Generate2DArray(4096);
+	int sizes[4] = {128, 1024, 2048, 4096};
+	auto count = 0;
+	while(count < 4){
+		auto n = sizes[count];
+		cout << "Matrix size: " << n << endl; 
+		auto A = Generate2DArray(n);
 
-    transposeNaive(A);
-	cout << endl;
-	//displayMatrix(A);
+		transposeNaive(A);
+		cout << endl;
+		//displayMatrix(A);
 
-    transposeDiagonal(A);
-    cout<<endl;
-    //displayMatrix(A);
+		transposeDiagonal(A);
+		cout<<endl;
+		//displayMatrix(A);
 
-    transposeBlock(A);
-    cout<<endl;
-    //displayMatrix(A);
+		transposeBlock(A);
+		cout<<endl;
+		//displayMatrix(A);
 
+		count++;
+	}
     return 0;
 }

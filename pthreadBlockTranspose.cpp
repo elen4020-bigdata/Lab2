@@ -9,50 +9,6 @@
 using namespace std;
 using namespace std::chrono;
 
-/*void blockThreading(shared_ptr<vector<shared_ptr<vector<int32_t>>>> A){
-	
-	int bSize = 2;
-
-	for(auto i = 0; i < A -> size(); i+=bSize){
-		for(auto j = (i + bSize); j < A -> size(); j+=bSize){
-			for(auto a = 0; a < bSize; a++){
-				for(auto b = 0; b < bSize; b++){
-					A -> at(i+a) -> at(j+b) = A -> at(i+a) -> at(j+b) + A -> at(j+a) -> at(i+b);
-					A -> at(j+a) -> at(i+b) = A -> at(i+a) -> at(j+b) - A -> at(j+a) -> at(i+b);
-					A -> at(i+a) -> at(j+b) = A -> at(i+a) -> at(j+b) - A -> at(j+a) -> at(i+b);
-				}
-			}
-            //Transpose inner blocks after they have been moved
-            for(auto c = 0; c < bSize; c++){
-                A -> at((j+1)*c-i*(c-1))->at((c-1)*(-j-1)+c*i) =  A -> at((j+1)*c-i*(c-1))->at((c-1)*(-j-1)+c*i) 
-                + A->at(c*(j-1)+1-i*(c-1))->at(c*i+1-(c-1)*(j-1));
-
-                A -> at(c*(j-1)+1-i*(c-1))->at(c*i+1-(c-1)*(j-1)) =  A -> at((j+1)*c-i*(c-1))->at((c-1)*(-j-1)+c*i) 
-                - A->at(c*(j-1)+1-i*(c-1))->at(c*i+1-(c-1)*(j-1));
-
-                A -> at((j+1)*c-i*(c-1))->at((c-1)*(-j-1)+c*i) =  A -> at((j+1)*c-i*(c-1))->at((c-1)*(-j-1)+c*i) 
-                - A->at(c*(j-1)+1-i*(c-1))->at(c*i+1-(c-1)*(j-1));
-            }
-		}
-        //Transpose the diagonal
-        A -> at(i)->at(i+1) = A -> at(i)->at(i+1) + A -> at(i+1)->at(i);
-        A -> at(i+1)->at(i) = A -> at(i)->at(i+1) - A -> at(i+1)->at(i);
-        A -> at(i)->at(i+1) = A -> at(i)->at(i+1) - A -> at(i+1)->at(i);
-	 }
-}
-
-
-void transpose(shared_ptr<vector<shared_ptr<vector<int32_t>>>> A) {
-	for(auto i = 0; i < A -> size(); i++){
-		for(auto j = (i + 1); j < A -> size(); j++){
-			A -> at(i) -> at(j) = A -> at(i) -> at(j) + A -> at(j) -> at(i);
-			A -> at(j) -> at(i) = A -> at(i) -> at(j) - A -> at(j) -> at(i);
-			A -> at(i) -> at(j) = A -> at(i) -> at(j) - A -> at(j) -> at(i);
-		}
-	}
-}*/
-
-
 struct thread_data{
     int i;
     int j;
@@ -96,14 +52,10 @@ void *PBlockSwap(void *threadargBlock){
     thread_data thread_data_2 = {i, j, 1, A};
 
     auto iret1 = pthread_create( &thread1, NULL, PTransposeBlock, (void*)&thread_data_1);
-    printf("Created Transpose Thread\n");
     auto iret2 = pthread_create( &thread2, NULL, PTransposeBlock, (void*)&thread_data_2);
-    printf("Created Transpose Thread\n");
 
     pthread_join(thread1, NULL);
-    printf("Joined Transpose Thread\n");
     pthread_join(thread2, NULL);
-    printf("Joined Transpose Thread\n");
 
 }
 
@@ -134,7 +86,6 @@ void PBlockThreading(shared_ptr<vector<shared_ptr<vector<int32_t>>>> A){
             data[threadCounter].i = i;
             data[threadCounter].j = j;
             rc = pthread_create(&threads[threadCounter], NULL, PBlockSwap, (void*)&data[threadCounter]);
-            printf("Created Swap Thread\n");
             threadCounter++;
         }
         //diagonals here
@@ -143,21 +94,16 @@ void PBlockThreading(shared_ptr<vector<shared_ptr<vector<int32_t>>>> A){
         data[threadCounter].j = i;
         data[threadCounter].c = 0;
         rc = pthread_create(&threads[threadCounter], NULL, PTransposeBlock, (void*)&data[threadCounter]);
-        printf("Created Diagonal Thread\n");
         threadCounter++;
     }
-
-    high_resolution_clock::time_point t2 = high_resolution_clock::now();
-    duration<double> time_span = duration_cast<duration<double>>(t2 - t1);
-    std::cout << "The operation took: " << time_span.count() << " seconds.";
-
     pthread_attr_destroy(&attr);
     for(auto i = 0; i < numthreads; i++){
 		rc = pthread_join(threads[i], &status);
-        printf("Joined Swap/Diagonal Thread\n");
     }
     
-
+    high_resolution_clock::time_point t2 = high_resolution_clock::now();
+    duration<double> time_span = duration_cast<duration<double>>(t2 - t1);
+    std::cout << "The operation took: " << time_span.count() << " seconds.";
 
 }
 
@@ -184,31 +130,31 @@ shared_ptr<vector<shared_ptr<vector<int32_t>>>> Generate2DArray(int32_t n){
     }
 
     
-    for (auto i = 0; i < n ; i++){
-        for(auto j = 0; j < n ; j++){
-            cout << A->at(i)->at(j) << " ";
-        }
-        cout <<endl;
-    }
+    //for (auto i = 0; i < n ; i++){
+    //    for(auto j = 0; j < n ; j++){
+    //        cout << A->at(i)->at(j) << " ";
+    //    }
+    //    cout <<endl;
+    //}
     return A;
 }
 
 int main(){
-	auto n = 32;
+	auto n = 4096;
     auto A = Generate2DArray(n);
 	//blockThreading(A);
     /*transpose(A);*/ 
 
     PBlockThreading(A);
 
-	cout<<endl;
+	//cout<<endl;
 
-	for (auto i = 0; i < n ; i++){
-        for(auto j = 0; j < n ; j++){
-            cout << A->at(i)->at(j) << " ";
-        }
-        cout <<endl;
-    }
+	//for (auto i = 0; i < n ; i++){
+    //    for(auto j = 0; j < n ; j++){
+    //        cout << A->at(i)->at(j) << " ";
+    //    }
+    //    cout <<endl;
+    //}
 
     return 0;
 }

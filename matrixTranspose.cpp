@@ -44,8 +44,8 @@ void blockThreading(shared_ptr<vector<shared_ptr<vector<int32_t>>>> A){
 
 }
 
-
 void transpose(shared_ptr<vector<shared_ptr<vector<int32_t>>>> A) {
+    high_resolution_clock::time_point t1 = high_resolution_clock::now();
 	for(auto i = 0; i < A -> size(); i++){
 		for(auto j = (i + 1); j < A -> size(); j++){
 			A -> at(i) -> at(j) = A -> at(i) -> at(j) + A -> at(j) -> at(i);
@@ -53,6 +53,9 @@ void transpose(shared_ptr<vector<shared_ptr<vector<int32_t>>>> A) {
 			A -> at(i) -> at(j) = A -> at(i) -> at(j) - A -> at(j) -> at(i);
 		}
 	}
+    high_resolution_clock::time_point t2 = high_resolution_clock::now();
+    duration<double> time_span = duration_cast<duration<double>>(t2 - t1);
+    std::cout << "The Non-threaded Naive operation took: " << time_span.count() << " seconds.";
 }
 
 class DimensionsHaveToBeNonZeroPositiveIntegersException{};
@@ -88,18 +91,16 @@ shared_ptr<vector<shared_ptr<vector<int32_t>>>> Generate2DArray(int32_t n){
 }
 
 int main(){
-	auto n = 128;
-    auto A = Generate2DArray(n);
-	blockThreading(A);
-    /*transpose(A);*/
-	//cout<<endl;
+	int sizes[4] = {128, 1024, 2048, 4096};
+	auto count = 0;
+	while(count < 4){
+		auto n = sizes[count];
+		cout << "Matrix size: " << n << endl; 
+		auto A = Generate2DArray(n);
 
-	for (auto i = 0; i < n ; i++){
-        for(auto j = 0; j < n ; j++){
-            //cout << A->at(i)->at(j) << " ";
-        }
-        //cout <<endl;
-    }
-
+		transpose(A);
+		cout << endl;
+	    count++;
+	}
     return 0;
 }
