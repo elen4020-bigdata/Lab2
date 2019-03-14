@@ -38,7 +38,7 @@ void *PBlockSwap(void *threadargBlock){
     struct thread_data *data = (struct thread_data *) threadargBlock;
     auto i = data ->i;
     auto j = data -> j;
-    auto A = data->A;
+    auto A = data -> A;
     for(auto a = 0; a < 2; a++){
 		for(auto b = 0; b < 2; b++){
 			A -> at(i+a) -> at(j+b) = A -> at(i+a) -> at(j+b) + A -> at(j+a) -> at(i+b);
@@ -62,44 +62,63 @@ void *PBlockSwap(void *threadargBlock){
 
 void PBlockThreading(shared_ptr<vector<shared_ptr<vector<int32_t>>>> A){
     int looper = 0;
-    int numthreads = 0;
-    while(looper < A->size()){
-        numthreads += (A->size() - looper)/2;
-        looper+=2;
-    }
-
+    int numthreads = 4;
+    //while(looper < A->size()){
+      //  numthreads += (A->size() - looper)/2;
+        //looper+=2;
+    //}
     pthread_t threads[numthreads];
     int rc;
-    struct thread_data data[numthreads];
+    struct thread_data data[numthreads+1];
     void *status;
     pthread_attr_t attr;
     pthread_attr_init(&attr);
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 
     int threadCounter = 0;
+    int dataCounter = 0;
     
     high_resolution_clock::time_point t1 = high_resolution_clock::now();
 
     for(auto i = 0; i < A -> size(); i+=2){
+        cout<<i<<endl;
 		for(auto j = (i + 2); j < A -> size(); j+=2){
-            data[threadCounter].A = A;
-            data[threadCounter].i = i;
-            data[threadCounter].j = j;
-            rc = pthread_create(&threads[threadCounter], NULL, PBlockSwap, (void*)&data[threadCounter]);
+            //cout<<"TOp of loop"<<endl;
+            data[dataCounter].A = A;
+            data[dataCounter].i = i;
+            data[dataCounter].j = j;
+            rc = pthread_create(&threads[threadCounter], NULL, PBlockSwap, (void*)&data[dataCounter]);
+            //cout<<threadCounter<<endl;
+            if(threadCounter == numthreads - 1){
+                for(auto c = 0; c < numthreads; c++){
+		            rc = pthread_join(threads[c], &status);
+                    threadCounter = -1;
+                    dataCounter = -1;
+                }
+            }
             threadCounter++;
+            dataCounter++;
         }
         //diagonals here
-        data[threadCounter].A = A;
-        data[threadCounter].i = i;
-        data[threadCounter].j = i;
-        data[threadCounter].c = 0;
-        rc = pthread_create(&threads[threadCounter], NULL, PTransposeBlock, (void*)&data[threadCounter]);
+        data[dataCounter].A = A;
+        data[dataCounter].i = i;
+        data[dataCounter].j = i;
+        data[dataCounter].c = 0;
+        rc = pthread_create(&threads[threadCounter], NULL, PTransposeBlock, (void*)&data[dataCounter]);
         threadCounter++;
+        dataCounter++;
+        if(threadCounter == 4){
+            for(auto c = 0; c < numthreads; c++){
+		        rc = pthread_join(threads[c], &status);
+                threadCounter = -1;
+                dataCounter = -1;
+            }
+            threadCounter = 0;
+            dataCounter = 0;
+        }
     }
     pthread_attr_destroy(&attr);
-    for(auto i = 0; i < numthreads; i++){
-		rc = pthread_join(threads[i], &status);
-    }
+
     
     high_resolution_clock::time_point t2 = high_resolution_clock::now();
     duration<double> time_span = duration_cast<duration<double>>(t2 - t1);
