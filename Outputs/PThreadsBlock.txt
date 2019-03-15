@@ -1,0 +1,12 @@
+g++ -pthread pthreadBlockTranspose.cpp -o pthreadBlockTranspose
+
+Matrix size: 128
+The operation took: 0.141722 seconds.
+Matrix size: 1024
+The operation took: 9.50652 seconds.
+Matrix size: 2048
+The operation took: 38.1574 seconds.
+Matrix size: 4096
+The operation took: 152.43 seconds.
+Matrix size: 16384
+The operation took: 2453.22 seconds.

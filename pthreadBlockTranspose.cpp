@@ -81,7 +81,7 @@ void PBlockThreading(shared_ptr<vector<shared_ptr<vector<int32_t>>>> A){
     high_resolution_clock::time_point t1 = high_resolution_clock::now();
 
     for(auto i = 0; i < A -> size(); i+=2){
-        cout<<i<<endl;
+        //cout<<i<<endl;
 		for(auto j = (i + 2); j < A -> size(); j+=2){
             //cout<<"TOp of loop"<<endl;
             data[dataCounter].A = A;
@@ -158,22 +158,19 @@ shared_ptr<vector<shared_ptr<vector<int32_t>>>> Generate2DArray(int32_t n){
     return A;
 }
 
+#define NUM_SIZES 5
 int main(){
-	auto n = 4096;
-    auto A = Generate2DArray(n);
-	//blockThreading(A);
-    /*transpose(A);*/ 
+	int sizes[NUM_SIZES] = {128, 1024, 2048, 4096, 16384};
+	auto count = 0;
+	while(count < NUM_SIZES){
+		auto n = sizes[count];
+		cout << "Matrix size: " << n << endl; 
+		auto A = Generate2DArray(n);
 
-    PBlockThreading(A);
+		PBlockThreading(A);
+		cout << endl;
 
-	//cout<<endl;
-
-	//for (auto i = 0; i < n ; i++){
-    //    for(auto j = 0; j < n ; j++){
-    //        cout << A->at(i)->at(j) << " ";
-    //    }
-    //    cout <<endl;
-    //}
-
+		count++;
+	}
     return 0;
 }
