@@ -66,7 +66,7 @@ void blockTranspose(array<array<T, n>,n>* A){
     std::cout << "The OpenMP Block threading operation took: " << time_span.count() << " seconds.";
 }
 
-#define BLOCK_S 64
+#define BLOCK_S 32
 int main(){
 
 	cout << "Matrix size: " << 128 << endl; 

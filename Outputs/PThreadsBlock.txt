@@ -1,0 +1,13 @@
+g++ -pthread testPthreads.cpp -o testpthreads
+#define BLOCK_SIZE 32
+
+Matrix size: 128
+The operation took: 0.0898164 seconds.
+Matrix size: 1024
+The operation took: 5.21568 seconds.
+Matrix size: 2048
+The operation took: 21.2167 seconds.
+Matrix size: 4096
+The operation took: 85.4492 seconds.
+Matrix size: 16384
+^C

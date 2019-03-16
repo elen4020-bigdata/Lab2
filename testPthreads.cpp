@@ -132,19 +132,43 @@ void blockTranspose(array<array<T, n>,n>* A){
 }
 
 
+#define BLOCK_S 32
 int main(){
-    auto A = new array<array<int32_t, 16384>,16384>;
-    Generate2DArray<int32_t,16384>(A);
-    cout << "transposing" << endl;
-    blockTranspose<int32_t, 16384, 32>(A);
+
+	cout << "Matrix size: " << 128 << endl; 
+    auto A = new array<array<int32_t, 128>, 128>;
+    Generate2DArray<int32_t,128>(A);
+    blockTranspose<int32_t, 128, BLOCK_S>(A);
     cout << endl;
-    // for (auto i = 0; i < 4 ; i++){
-    //     for(auto j = 0; j < 4 ; j++){
-    //         cout << A->at(i).at(j) << " ";
-    //     }
-    //     cout <<endl;
-    // }
-    cout << "done" << endl;
     delete A;
+    
+	cout << "Matrix size: " << 1024 << endl; 
+    auto B = new array<array<int32_t, 1024>, 1024>;
+    Generate2DArray<int32_t,1024>(B);
+    blockTranspose<int32_t, 1024, BLOCK_S>(B);
+    cout << endl;
+    delete B;
+
+	cout << "Matrix size: " << 2048 << endl; 
+    auto C = new array<array<int32_t, 2048>, 2048>;
+    Generate2DArray<int32_t, 2048>(C);
+    blockTranspose<int32_t, 2048, BLOCK_S>(C);
+    cout << endl;
+    delete C;
+
+	cout << "Matrix size: " << 4096 << endl; 
+    auto D = new array<array<int32_t, 4096>, 4096>;
+    Generate2DArray<int32_t,4096>(D);
+    blockTranspose<int32_t, 4096, BLOCK_S>(D);
+    cout << endl;
+    delete D;
+
+	//cout << "Matrix size: " << 16384 << endl; 
+    //auto E = new array<array<int32_t, 16384>, 16384>;
+    //Generate2DArray<int32_t, 16384>(E);
+    //blockTranspose<int32_t, 16384, BLOCK_S>(E);
+    //cout << endl;
+    //delete E;
+
     return 0;
 }

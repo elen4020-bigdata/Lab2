@@ -16,3 +16,20 @@ Matrix size: 16384
 starting
 The OpenMP Block threading operation took: 0.438992 seconds.
 
+
+#define BLOCK_S 64
+Matrix size: 128
+starting
+The OpenMP Block threading operation took: 0.000661842 seconds.
+Matrix size: 1024
+starting
+The OpenMP Block threading operation took: 0.00113405 seconds.
+Matrix size: 2048
+starting
+The OpenMP Block threading operation took: 0.00506773 seconds.
+Matrix size: 4096
+starting
+The OpenMP Block threading operation took: 0.0275392 seconds.
+Matrix size: 16384
+starting
+The OpenMP Block threading operation took: 0.459761 seconds.
