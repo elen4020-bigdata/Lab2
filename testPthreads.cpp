@@ -31,12 +31,12 @@ void Generate2DArray(array<array<T, n>,n>* A){
     }
 
     
-    for (auto i = 0; i < n ; i++){
-        for(auto j = 0; j < n ; j++){
-            cout << A->at(i).at(j) << " ";
-        }
-        cout <<endl;
-    }
+    // for (auto i = 0; i < n ; i++){
+    //     for(auto j = 0; j < n ; j++){
+    //         cout << A->at(i).at(j) << " ";
+    //     }
+    //     cout <<endl;
+    // }
 }
 
 template<class T, int n>
@@ -52,7 +52,6 @@ struct newData{
     array<array<T, n>,n>* A;
     int i;
     int l;
-    int blockSize;
     int j;
     int k;
     bool swap;
@@ -62,13 +61,12 @@ template<class T, int n>
 void *swap(void *args){
     struct newData<T,n> *data;
     data = (struct newData<T,n> *) args;
+    auto A = data -> A;
     auto i = data -> i;
     auto l = data -> l;
     auto j = data -> j;
     auto k = data -> k;
-    auto A = data -> A;
     auto swap = data -> swap;
-    auto blockSize = data -> blockSize;
     if((i == l && swap) || (i != l)){
         auto temp = A->at(i+j).at(l+k);
         A->at(i+j).at(l+k) = A->at(l+k).at(i+j);
@@ -84,13 +82,13 @@ void *Transpose(void *args){
     auto l = data -> l;
     auto A = data -> A;
     auto blockSize = data -> blockSize;
-    pthread_t threads[blockSize];
-    struct newData<T,n> newData[blockSize];
+    pthread_t threads[blockSize*blockSize];
+    struct newData<T,n> newData[blockSize*blockSize];
     void *status;
     pthread_attr_t attr;
     pthread_attr_init(&attr);
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
-    for(auto q = 0; q < blockSize; q++){
+    for(auto q = 0; q < (blockSize*blockSize); q++){
 		newData[q].A = A;
 		newData[q].i = i;
         newData[q].l = l;
@@ -103,7 +101,6 @@ void *Transpose(void *args){
             newData[iter].swap = true;
             if(i == l && (iter%2 == 0)){
                 newData[iter].swap = false;
-                cout << "swapping" << endl;
             }
             pthread_create(&threads[iter],NULL, swap<T,n>, (void*)&newData[iter]);
             iter++;
@@ -136,6 +133,7 @@ void blockTranspose(array<array<T, n>,n>* A){
             pthread_create(&threads[iter], NULL, Transpose<T,n>, (void*)&data[iter]);
             iter++;
         }
+        printf("still going");
     }
     pthread_attr_destroy(&attr);
     for(auto i = 0; i < numThreads; i++){
@@ -145,16 +143,18 @@ void blockTranspose(array<array<T, n>,n>* A){
 
 
 int main(){
-    auto A = new array<array<int32_t, 4>,4>;
-    Generate2DArray<int32_t,4>(A);
-    blockTranspose<int32_t, 4, 2>(A);
+    auto A = new array<array<int32_t, 1024>,1024>;
+    Generate2DArray<int32_t,1024>(A);
+    cout << "transposing" << endl;
+    blockTranspose<int32_t, 1024, 16>(A);
     cout << endl;
-    for (auto i = 0; i < 4 ; i++){
-        for(auto j = 0; j < 4 ; j++){
-            cout << A->at(i).at(j) << " ";
-        }
-        cout <<endl;
-    }
+    // for (auto i = 0; i < 4 ; i++){
+    //     for(auto j = 0; j < 4 ; j++){
+    //         cout << A->at(i).at(j) << " ";
+    //     }
+    //     cout <<endl;
+    // }
+    cout << "done" << endl;
     delete A;
     return 0;
 }
