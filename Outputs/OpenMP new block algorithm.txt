@@ -1,0 +1,18 @@
+g++ -fopenmp -lgomp testopenMP.cpp -O2 -o testopenMP
+#define BLOCK_S 64
+Matrix size: 128
+starting
+The OpenMP Block threading operation took: 0.00067019 seconds.
+Matrix size: 1024
+starting
+The OpenMP Block threading operation took: 0.00221981 seconds.
+Matrix size: 2048
+starting
+The OpenMP Block threading operation took: 0.00460596 seconds.
+Matrix size: 4096
+starting
+The OpenMP Block threading operation took: 0.0219884 seconds.
+Matrix size: 16384
+starting
+The OpenMP Block threading operation took: 0.438992 seconds.
+
