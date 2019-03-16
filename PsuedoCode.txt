@@ -1,0 +1,146 @@
+
+\begin{algorithm}[H]
+	\SetAlgoLined
+	\SetKwData{Left}{left}\SetKwData{This}{this}\SetKwData{Up}{up}
+	\SetKwFunction{Union}{Union}\SetKwFunction{FindCompress}{FindCompress}
+	\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+	\Input{Pointer to a 2D square matrix}
+	\Output{In-place transposition of matrix} 
+	\For{Each row of the matrix}{
+		\For{Each column element after the current row value}{
+			Transpose current row and column elements;
+		}
+	}
+\caption{Basic Transposition Algorithm}
+\end{algorithm}
+
+
+\begin{algorithm}[H]
+	\SetAlgoLined
+	\SetKwData{Left}{left}\SetKwData{This}{this}\SetKwData{Up}{up}
+	\SetKwFunction{Union}{Union}\SetKwFunction{FindCompress}{FindCompress}
+	\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+	\Input{Pointer to a 2D square matrix}
+	\Output{In-place transposition of matrix} 
+	Create array of Pthreads of the same size as the matrix dimension;\\
+	Create data array of structs for the threads to work on;\\
+	Initialise the 	Pthread attribute to joinable;\\
+	Populate data with pointers to the matrix and row numbers;\\
+	\For{Each row of the matrix}{
+		Create thread for each row of matrix;\\
+		Call transposistion function;\\
+	}
+	\For{Each row of the matrix}{
+		Join the created threads;
+	}
+\vspace{0.5cm}
+	Transposition function\\
+	\Input{Pointer to thread argument}
+	\Output{Transposed diagonal}
+	Extract data from thread argument pointer;\\
+	Extract current row from thread argument pointer;\\
+	\For{Each column element after the current row value }{
+		Transpose along current diagonal;
+	}
+	
+	
+	\caption{Diagonal Pthread Transposition Algorithm}
+\end{algorithm}
+
+
+
+\begin{algorithm}[H]
+	\SetAlgoLined
+	\SetKwData{Left}{left}\SetKwData{This}{this}\SetKwData{Up}{up}
+	\SetKwFunction{Union}{Union}\SetKwFunction{FindCompress}{FindCompress}
+	\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+	\Input{Pointer to a 2D square matrix, matrix size, block size}
+	\Output{In-place transposition of matrix} 
+	Create array of Pthreads of the of size ((matrixSize/blockSize)*(matrixSize/blockSize)/2)  \\+((matrixSize/blockSize)/2);\\
+	Create data array of structs for the threads to work on;
+	Initialise the 	Pthread attribute to joinable;
+	Populate data with pointers to the matrix and block size;\\
+	Initialise independent iterator to 0;\\
+	\For{Each row of the matrix in steps of the block size}{
+		\For{Each column of the matrix in steps of the block size}{
+			Populate data aray with row and column indicies;\\
+			Create thread for each row of matrix;\\
+			Call transposistion function;\\
+			Increase independent iterator by 1;\\		
+		}
+		
+		
+	}
+	\For{Each row of the matrix}{
+		Join the created threads;
+	}
+	\vspace{0.5cm}
+	Transposition function\\
+	\Input{Pointer to thread argument}
+	\Output{Transposed diagonal}
+	Extract data from thread argument pointer;\\
+	Extract current row from thread argument pointer;\\
+	\For{The size of the block}{
+		\For{The size of the block}{
+			Transpose the block elements;\\	
+		}
+	}
+		
+	\caption{Block Pthread Transposition Algorithm}
+\end{algorithm}
+
+
+\begin{algorithm}[H]
+	\SetAlgoLined
+	\SetKwData{Left}{left}\SetKwData{This}{this}\SetKwData{Up}{up}
+	\SetKwFunction{Union}{Union}\SetKwFunction{FindCompress}{FindCompress}
+	\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+	\Input{Pointer to a 2D square matrix}
+	\Output{In-place transposition of matrix} 
+	OMP Parallel For Loop;\\
+	\For{Each row of the matrix}{
+		OMP Parallel For Loop;\\
+		\For{Each column of the matrix}{
+			Transpose matrix emelents;\\	
+		}
+	}
+	\caption{Naive OpenMP Transposition Algorithm}
+\end{algorithm}
+
+
+\begin{algorithm}[H]
+	\SetAlgoLined
+	\SetKwData{Left}{left}\SetKwData{This}{this}\SetKwData{Up}{up}
+	\SetKwFunction{Union}{Union}\SetKwFunction{FindCompress}{FindCompress}
+	\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+	\Input{Pointer to a 2D square matrix}
+	\Output{In-place transposition of matrix} 
+	OMP Parallel For Loop;\\
+	\For{Each row of the matrix}{
+		\For{Each column of the matrix}{
+			Transpose matrix emelents;\\	
+		}
+	}
+	\caption{Diagonal OpenMP Transposition Algorithm}
+\end{algorithm}
+
+\begin{algorithm}[H]
+	\SetAlgoLined
+	\SetKwData{Left}{left}\SetKwData{This}{this}\SetKwData{Up}{up}
+	\SetKwFunction{Union}{Union}\SetKwFunction{FindCompress}{FindCompress}
+	\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+	\Input{Pointer to a 2D square matrix}
+	\Output{In-place transposition of matrix} 
+	OMP Parallel For Loop;\\
+	\For{Each row of the matrix in steps of the block size}{
+		\For{Each column of the matrix in steps of the block size}{
+			OMP Parallel For Loop;\\
+			\For{The block size}{
+				\For{The block size}{
+					Transpose block emelents;\\
+				}
+			}	
+		}
+	}
+	\caption{Block OpenMP Transposition Algorithm}
+\end{algorithm}
