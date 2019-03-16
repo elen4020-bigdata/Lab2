@@ -28,15 +28,15 @@ void *diagonal(void *threadarg){
 }
 
 void transpose(shared_ptr<vector<shared_ptr<vector<int32_t>>>> A){
-    	int sizeMatrix = A -> size();
-    	pthread_t threads[sizeMatrix];
-    	int rc;
-    	struct thread_data data[sizeMatrix];
-    	void *status;
-    	pthread_attr_t attr;
-    	pthread_attr_init(&attr);
-    	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
-    	for(auto i = 0; i < sizeMatrix; i++){
+    int sizeMatrix = A -> size();
+    pthread_t threads[sizeMatrix];
+    int rc;
+    struct thread_data data[sizeMatrix];
+    void *status;
+    pthread_attr_t attr;
+    pthread_attr_init(&attr);
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+    for(auto i = 0; i < sizeMatrix; i++){
 		data[i].A = A;
 		data[i].row = i;
 	}
