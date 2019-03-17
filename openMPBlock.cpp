@@ -30,7 +30,6 @@ void Generate2DArray(array<array<T, n>,n>* A){
 
 template<class T, int n, int blockSize>
 void blockTranspose(array<array<T, n>,n>* A){
-    cout << "starting" << endl;
     high_resolution_clock::time_point t1 = high_resolution_clock::now();
     #pragma omp parallel for
     for(auto i = 0; i < n; i=i+blockSize){

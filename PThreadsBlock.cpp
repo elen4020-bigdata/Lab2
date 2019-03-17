@@ -100,7 +100,7 @@ void blockTranspose(array<array<T, n>,n>* A){
     }
     high_resolution_clock::time_point t2 = high_resolution_clock::now();
     duration<double> time_span = duration_cast<duration<double>>(t2 - t1);
-    std::cout << "The operation took: " << time_span.count() << " seconds.";
+    std::cout << "The PThreads Block operation took: " << time_span.count() << " seconds.";
 }
 
 
