@@ -17,11 +17,11 @@
 \begin{tabular}{| p{2cm} | p{2cm} | p{2cm} | p{2cm} | p{2cm} | p{2cm} | p{2cm} |}
 \hline
  $N_{0}=N_{1}$  & Basic (s) & Pthread -  Diagonal (s)& Pthreads - Blocked (s)&OpenMP - Naive (s)& OpenMP - Diagonal (s)& OpenMP - Blocked (s)\\ \hline
- 128 & $5.5828\times10^{-5}$ & $0.0057640$ &$0.089816$&$0.0054073$&$0.0017463$&$0.00067019$\\  
- 1024 & $0.0037808$ & $0.051978$ &$5.2157$&$0.0028294$&$0.0040702$&$0.0022198$\\
- 2048& $0.021078$ & $0.18114$ &$21.217$&$0.0090414$&$0.0098804$&$0.0046060$\\
- 4096 & $0.088854$ & $0.63340$ &$85.449$&$0.033679$&$0.039016$&$0.021988$\\
- 16384 & $1.7036$ & $9.5218$ &-&$1.1346$&$0.96734$&$0.43899$\\
+ 128 & $5.5828\times10^{-5}$ & $0.0057640$ &$0.031893$&$0.0031893$&$5.3747\times 10^{-5}$&$0.00067019$\\  
+ 1024 & $0.0037808$ & $0.051978$ &$5.2157$&$0.0026004$&$0.0019828$&$0.0022198$\\
+ 2048& $0.021078$ & $0.18114$ &$21.217$&$0.0.0061313$&$0.0055345$&$0.0046060$\\
+ 4096 & $0.088854$ & $0.63340$ &$85.449$&$0.025705$&$0.02354$&$0.021988$\\
+ 16384 & $1.7036$ & $9.5218$ &-&$1.2415$&$1.2145$&$0.43899$\\
  \hline    
 \end{tabular}
 \end{center}
@@ -81,15 +81,13 @@ The parallelisation using OpenMP involves parallelising the block operations. Ea
 
 \section{Discussion}
 
-From the results, for smaller matrix sizes, the non-threaded implementations outperform the threaded implementations.
+From the results, for smaller matrix sizes, the non-threaded implementations outperform the threaded implementations, excluding the diagonal implementation for OpenMP.
 For these smaller matrix sizes, the loss in time due to overhead outweighs the benefit gained from parallelizing the programme.
 As the matrix size increases, it is clear the parallelized implementations outperform the non-threaded, with exception of the Pthread codes.
 
-The Naive approach out performs the diagonal approach for smaller matrix sizes.
-However, as the matrix size increases, the diagonal method out performs the naive.
-This is due to the extra communication and overhead that takes place during the naive swapping.
-For large matrix sizes, this lose outweighs the speed from using individual threads for a single swap.
-The block transposition method elliminates more overhead than the diagonal method, resulting in its outperformance when using OpenMP.
+For OpenMP, the block transposition method only begins to outperform the naive and diagonal methods when the matrix size increases.
+This is because the increase in overhead outweighs the benefits gained of block transposition until the matrix is large.
+The diagonal outperforms the naive implementation due to the decrease in overhead in the diagonal method when compared to the naive method. 
 
 OpenMP outperforms Pthreads for each implementation.
 OpenMP is better optimized than Pthreads for the C++ language, resulting in this difference.
