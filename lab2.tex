@@ -2,6 +2,7 @@
 \usepackage{graphicx,color}
 \usepackage[margin=2cm]{geometry}
 \usepackage{algorithm2e}
+\usepackage{amsmath}
 
 \begin{document}
 
@@ -15,57 +16,100 @@
 \begin{center}
 \begin{tabular}{| p{2cm} | p{2cm} | p{2cm} | p{2cm} | p{2cm} | p{2cm} | p{2cm} |}
 \hline
- $N_{0}=N_{1}$  & Basic & Pthread -  Diagonal & Pthreads - Blocked&OpenMP - Naive& OpenMP - Diagonal & OpenMP - Blocked\\ \hline
- 128 & $5.5828\times10^{-5}$ & $0.0057640$ &&$0.0054073$&$0.0017463$&$0.0026457$\\  
- 1024 & $0.0037808$ & $0.051978$ &&$0.0028294$&$0.0040702$&$0.060210$\\
- 2048& $0.021078$ & $0.18114$ &&$0.0090414$&$0.0098804$&$0.21979$\\
- 4096 & $0.088854$ & $0.63340$ &&$0.033679$&$0.039016$&$0.92435$\\
- 16384 & $1.7036$ & $9.5218$ &&$1.1346$&$0.96734$&$15.318$\\
+ $N_{0}=N_{1}$  & Basic (s) & Pthread -  Diagonal (s)& Pthreads - Blocked (s)&OpenMP - Naive (s)& OpenMP - Diagonal (s)& OpenMP - Blocked (s)\\ \hline
+ 128 & $5.5828\times10^{-5}$ & $0.0057640$ &$0.089816$&$0.0054073$&$0.0017463$&$0.00067019$\\  
+ 1024 & $0.0037808$ & $0.051978$ &$5.2157$&$0.0028294$&$0.0040702$&$0.0022198$\\
+ 2048& $0.021078$ & $0.18114$ &$21.217$&$0.0090414$&$0.0098804$&$0.0046060$\\
+ 4096 & $0.088854$ & $0.63340$ &$85.449$&$0.033679$&$0.039016$&$0.021988$\\
+ 16384 & $1.7036$ & $9.5218$ &-&$1.1346$&$0.96734$&$0.43899$\\
  \hline    
 \end{tabular}
 \end{center}
 
+\section{Parallel Threading Algorithm}
+In order to parallelise the transposition algorithm, the transposition is completed one row at a time in a separate thread. To avoid swapping elements which have already been swapped, the algorithm makes use of a nested \verb|for| loop with a depth of two. The outer loop row counter \verb|i| runs through every row, and the inner loop counter for the columns begins at \verb|j=i+1|. 
+
+\subsection{PThreads}
+
+Using Pthreads, each column is given to a single thread.
+This thread swaps that row and column, from $j=i+1$ until the length of the matrix.
+
+\subsection{OpenMP}
+
+\subsubsection{Naive method}
+
+Using the naive method of parallelization, both the inner and outer loops are parallelized .
+This gives each thread an single swap to complete.
+This is done by collapsing the for loops.
+
+\subsubsection{Diagonal method}
+
+Using the diagonal method, only the outer for loop is parallelized .
+As a result, each thread swaps a single column from the diagonal to the rightmost element.
+
+\section{Block Transposition Algorithm}
+The Block Transposition algorithm completes the process by swapping two blocks and then each block is transposed. This is shown to result in transposition as shown below:
+$$ \begin{bmatrix}
+A & B \\ 
+C & D
+\end{bmatrix} ^T
+= 
+\begin{bmatrix}
+\begin{bmatrix}
+A\\ 
+C
+\end{bmatrix} ^T \\ 
+\begin{bmatrix}
+B
+\\ 
+D
+\end{bmatrix} ^T
+\end{bmatrix}
+= 
+\begin{bmatrix}
+A^T & C^T \\ 
+B^T & D^T
+\end{bmatrix}
+$$
+
+\subsection{PThreads}
+
+Creating this operation using PThreads, each block $B_{ij}$ of 2 x 2 matrix elements are assigned to a thread and is swapped with the corresponding block $B_{ji}$. Once this operation has been completed, two more child threads are spawned to transpose $B_{ij}$ and $B_{ji}$.
+
+\subsection{OpenMP}
+The parallelisation using OpenMP involves parallelising the block operations. Each thread uses additional parallelisation to swap $B_{ij}$ and $B_{ji}$ and subsequently each transposition is parallelised. 
+
+\section{Discussion}
+
+From the results, for smaller matrix sizes, the non-threaded implementations outperform the threaded implementations.
+For these smaller matrix sizes, the loss in time due to overhead outweighs the benefit gained from parallelizing the programme.
+As the matrix size increases, it is clear the parallelized implementations outperform the non-threaded, with exception of the Pthread codes.
+
+The Naive approach out performs the diagonal approach for smaller matrix sizes.
+However, as the matrix size increases, the diagonal method out performs the naive.
+This is due to the extra communication and overhead that takes place during the naive swapping.
+For large matrix sizes, this lose outweighs the speed from using individual threads for a single swap.
+The block transposition method elliminates more overhead than the diagonal method, resulting in its outperformance when using OpenMP.
+
+OpenMP outperforms Pthreads for each implementation.
+OpenMP is better optimized than Pthreads for the C++ language, resulting in this difference.
+
 \section{Pseudocode}
 
+
 \begin{algorithm}[H]
 	\SetAlgoLined
 	\SetKwData{Left}{left}\SetKwData{This}{this}\SetKwData{Up}{up}
 	\SetKwFunction{Union}{Union}\SetKwFunction{FindCompress}{FindCompress}
 	\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
-	\Input{Two 2D square matrices}
-	\Output{Calculating the addition of two 2D square matrices}
-	initialise results matrix\; 
+	\Input{Pointer to a 2D square matrix}
+	\Output{In-place transposition of matrix} 
 	\For{Each row of the matrix}{
-		\For{Each column element in the current row}{
-			Sum the corresponding row and column elements of\\
-			both matrices\;
-			Store sum value in result matrix\;
+		\For{Each column element after the current row value}{
+			Transpose current row and column elements;
 		}
 	}
-
-	Return results matrix\;
-\caption{2D Addition Algorithm}
-\end{algorithm}
-
-\begin{algorithm}[H]
-	\SetAlgoLined
-	\SetKwData{Left}{left}\SetKwData{This}{this}\SetKwData{Up}{up}
-	\SetKwFunction{Union}{Union}\SetKwFunction{FindCompress}{FindCompress}
-	\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
-	\Input{Two 3D cubic matrices}
-	\Output{Calculating the addition of two 3D cubic matrices}
-	initialise results matrix\;
-	\For{Each depth row of the cube}{
-		\For{Each row of the cube at the current depth}{
-			\For{Each column element at the current depth and row}{
-				Sum the corresponding row and column elements of\\ 
-				both matrices at the current depth\;
-				Store sum value in result matrix\;
-			}
-		}
-	}
-	Return results matrix\;
-	\caption{3D Addition Algorithm}
+\caption{Basic Transposition Algorithm}
 \end{algorithm}
 
 
@@ -74,39 +118,129 @@
 	\SetKwData{Left}{left}\SetKwData{This}{this}\SetKwData{Up}{up}
 	\SetKwFunction{Union}{Union}\SetKwFunction{FindCompress}{FindCompress}
 	\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
-	\Input{Two 2D square matricesB}
-	\Output{Calculating the multiplication of two 2D square matrices}
-	initialise results matrix\;
-	\For{Each row of the square}{
-		\For{Each column of the square at the current row}{
-			\For{Each element in the row and column of the corresponding matrices}{
-				Mutiply and sum the corresponding row and column elements\;
-			}
-			Store sum value in result matrix\;
-		}
+	\Input{Pointer to a 2D square matrix}
+	\Output{In-place transposition of matrix} 
+	Create array of Pthreads of the same size as the matrix dimension;\\
+	Create data array of structs for the threads to work on;\\
+	Initialise the 	Pthread attribute to joinable;\\
+	Populate data with pointers to the matrix and row numbers;\\
+	\For{Each row of the matrix}{
+		Create thread for each row of matrix;\\
+		Call transposistion function;\\
 	}
-	Return results matrix\;
-	\caption{2D Multiplication Algorithm}
+	\For{Each row of the matrix}{
+		Join the created threads;
+	}
+\vspace{0.5cm}
+	Transposition function\\
+	\Input{Pointer to thread argument}
+	\Output{Transposed diagonal}
+	Extract data from thread argument pointer;\\
+	Extract current row from thread argument pointer;\\
+	\For{Each column element after the current row value }{
+		Transpose along current diagonal;
+	}
 	
+	
+	\caption{Diagonal Pthread Transposition Algorithm}
+\end{algorithm}
+
+
+
+\begin{algorithm}[H]
+	\SetAlgoLined
+	\SetKwData{Left}{left}\SetKwData{This}{this}\SetKwData{Up}{up}
+	\SetKwFunction{Union}{Union}\SetKwFunction{FindCompress}{FindCompress}
+	\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+	\Input{Pointer to a 2D square matrix, matrix size, block size}
+	\Output{In-place transposition of matrix} 
+	Create array of Pthreads of the of size ((matrixSize/blockSize)*(matrixSize/blockSize)/2)  \\+((matrixSize/blockSize)/2);\\
+	Create data array of structs for the threads to work on;
+	Initialise the 	Pthread attribute to joinable;
+	Populate data with pointers to the matrix and block size;\\
+	Initialise independent iterator to 0;\\
+	\For{Each row of the matrix in steps of the block size}{
+		\For{Each column of the matrix in steps of the block size}{
+			Populate data aray with row and column indicies;\\
+			Create thread for each row of matrix;\\
+			Call transposistion function;\\
+			Increase independent iterator by 1;\\		
+		}
+		
+		
+	}
+	\For{Each row of the matrix}{
+		Join the created threads;
+	}
+	\vspace{0.5cm}
+	Transposition function\\
+	\Input{Pointer to thread argument}
+	\Output{Transposed diagonal}
+	Extract data from thread argument pointer;\\
+	Extract current row from thread argument pointer;\\
+	\For{The size of the block}{
+		\For{The size of the block}{
+			Transpose the block elements;\\	
+		}
+	}
+		
+	\caption{Block Pthread Transposition Algorithm}
+\end{algorithm}
+
+
+\begin{algorithm}[H]
+	\SetAlgoLined
+	\SetKwData{Left}{left}\SetKwData{This}{this}\SetKwData{Up}{up}
+	\SetKwFunction{Union}{Union}\SetKwFunction{FindCompress}{FindCompress}
+	\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+	\Input{Pointer to a 2D square matrix}
+	\Output{In-place transposition of matrix} 
+	OMP Parallel For Loop;\\
+	\For{Each row of the matrix}{
+		OMP Parallel For Loop;\\
+		\For{Each column of the matrix}{
+			Transpose matrix emelents;\\	
+		}
+	}
+	\caption{Naive OpenMP Transposition Algorithm}
+\end{algorithm}
+
+
+\begin{algorithm}[H]
+	\SetAlgoLined
+	\SetKwData{Left}{left}\SetKwData{This}{this}\SetKwData{Up}{up}
+	\SetKwFunction{Union}{Union}\SetKwFunction{FindCompress}{FindCompress}
+	\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+	\Input{Pointer to a 2D square matrix}
+	\Output{In-place transposition of matrix} 
+	OMP Parallel For Loop;\\
+	\For{Each row of the matrix}{
+		\For{Each column of the matrix}{
+			Transpose matrix emelents;\\	
+		}
+	}
+	\caption{Diagonal OpenMP Transposition Algorithm}
 \end{algorithm}
 
 \begin{algorithm}[H]
-\SetAlgoLined
-\SetKwData{Left}{left}\SetKwData{This}{this}\SetKwData{Up}{up}
-\SetKwFunction{Union}{Union}\SetKwFunction{FindCompress}{FindCompress}
-\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
-\Input{Matrix A and B, two 3D cubic matrices}
-\Output{Matrix C, the multiple of two 3D matrices}
-\BlankLine
-\For{each row in matrix C}{
-\For{each column in matrix C}{\label{forins}
-\For{each depth in matrix C}{
-Get corresponding row at depth from matrix A\;
-Get corresponding column at depth from matrix B\;
-Multiply the obtained row and column to get the value of matrix C at the current row, column and depth.
-}}}
-\caption{3D Multiplication Algorithm}\label{algo_disjdecomp}
-
+	\SetAlgoLined
+	\SetKwData{Left}{left}\SetKwData{This}{this}\SetKwData{Up}{up}
+	\SetKwFunction{Union}{Union}\SetKwFunction{FindCompress}{FindCompress}
+	\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+	\Input{Pointer to a 2D square matrix}
+	\Output{In-place transposition of matrix} 
+	OMP Parallel For Loop;\\
+	\For{Each row of the matrix in steps of the block size}{
+		\For{Each column of the matrix in steps of the block size}{
+			OMP Parallel For Loop;\\
+			\For{The block size}{
+				\For{The block size}{
+					Transpose block emelents;\\
+				}
+			}	
+		}
+	}
+	\caption{Block OpenMP Transposition Algorithm}
 \end{algorithm}
 
 \end{document}
