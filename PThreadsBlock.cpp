@@ -3,6 +3,7 @@
 #include <ctime>
 #include <random>
 #include <chrono>
+#include <memory>
 
 using namespace std;
 using namespace std::chrono;
@@ -28,14 +29,34 @@ void Generate2DArray(array<array<T, n>,n>* A){
     }
 }
 
-template<class T, int n, int blockSize>
-void blockTranspose(array<array<T, n>,n>* A){
-    cout << "starting" << endl;
-    high_resolution_clock::time_point t1 = high_resolution_clock::now();
-    #pragma omp parallel for
-    for(auto i = 0; i < n; i=i+blockSize){
-        for(auto l = i; l < n; l=l+blockSize){
-            #pragma omp parallel for
+template<class T, int n>
+struct thread_data{
+    array<array<T, n>,n>* A;
+    int i;
+    int l;
+    int blockSize;
+};
+
+template<class T, int n>
+struct newData{
+    array<array<T, n>,n>* A;
+    int i;
+    int l;
+    int j;
+    int k;
+    bool swap;
+};
+
+template<class T, int n>
+void *Transpose(void *args){
+    struct thread_data<T,n> *data;
+    data = (struct thread_data<T,n> *) args;
+    auto i = data -> i;
+    auto l = data -> l;
+    auto A = data -> A;
+    auto blockSize = data -> blockSize;
+    for(auto j = 0; j < (blockSize); j++){
+        for(auto k = 0; k < (blockSize); k++){
             for(auto j = 0; j < (blockSize); j++){
                 for(auto k = 0; k < (blockSize); k++){
                     auto temp = A->at(i+j).at(l+k);
@@ -48,14 +69,42 @@ void blockTranspose(array<array<T, n>,n>* A){
             }
         }
     }
-    high_resolution_clock::time_point t2 = high_resolution_clock::now();
-
-    duration<double> time_span = duration_cast<duration<double>>(t2 - t1);
-
-    std::cout << "The OpenMP Block threading operation took: " << time_span.count() << " seconds.";
 }
 
-#define BLOCK_S 64
+template<class T, int n, int blockSize>
+void blockTranspose(array<array<T, n>,n>* A){
+    high_resolution_clock::time_point t1 = high_resolution_clock::now();
+    int numThreads = ((n/blockSize)*(n/blockSize)/2)+((n/blockSize)/2);
+    pthread_t threads[numThreads];
+    struct thread_data<T, n> data[numThreads];
+    void *status;
+  	pthread_attr_t attr;
+	pthread_attr_init(&attr);
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+    for(auto i = 0; i < numThreads; i++){
+        data[i].A = A;
+        data[i].blockSize = blockSize;
+    }
+    auto iter = 0;
+    for(auto i = 0; i < n; i=i+blockSize){
+        for(auto l = i; l < n; l=l+blockSize){
+            data[iter].i = i;
+            data[iter].l = l;
+            pthread_create(&threads[iter], NULL, Transpose<T,n>, (void*)&data[iter]);
+            iter++;
+        }
+    }
+    pthread_attr_destroy(&attr);
+    for(auto i = 0; i < numThreads; i++){
+    	pthread_join(threads[i], &status);
+    }
+    high_resolution_clock::time_point t2 = high_resolution_clock::now();
+    duration<double> time_span = duration_cast<duration<double>>(t2 - t1);
+    std::cout << "The operation took: " << time_span.count() << " seconds.";
+}
+
+
+#define BLOCK_S 32
 int main(){
 
 	cout << "Matrix size: " << 128 << endl; 
@@ -85,13 +134,6 @@ int main(){
     blockTranspose<int32_t, 4096, BLOCK_S>(D);
     cout << endl;
     delete D;
-
-	cout << "Matrix size: " << 16384 << endl; 
-    auto E = new array<array<int32_t, 16384>, 16384>;
-    Generate2DArray<int32_t, 16384>(E);
-    blockTranspose<int32_t, 16384, BLOCK_S>(E);
-    cout << endl;
-    delete E;
 
     return 0;
 }

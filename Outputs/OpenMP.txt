@@ -5,48 +5,27 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 g++ -fopenmp -lgomp OpenMP.cpp -O2 -o OpenMP
 
+
+#define BLOCK_S 64 
+
+
 Matrix size: 128
-The OpenMP Naive threading operation took: 0.00540726 seconds.
-The OpenMP Diagonal threading operation took: 0.00174629 seconds.
-The OpenMP Block threading operation took: 0.00264571 seconds.
+The OpenMP Naive threading operation took: 0.00318928 seconds.
+The OpenMP Diagonal threading operation took: 5.3747e-05 seconds.
+The OpenMP Block threading operation took: 0.00067019 seconds.
 Matrix size: 1024
-The OpenMP Naive threading operation took: 0.00282941 seconds.
-The OpenMP Diagonal threading operation took: 0.00407015 seconds.
-The OpenMP Block threading operation took: 0.0602101 seconds.
+The OpenMP Naive threading operation took: 0.00260043 seconds.
+The OpenMP Diagonal threading operation took: 0.00198284 seconds.
+The OpenMP Block threading operation took: 0.00221981 seconds.
 Matrix size: 2048
-The OpenMP Naive threading operation took: 0.00904139 seconds.
-The OpenMP Diagonal threading operation took: 0.00988038 seconds.
-The OpenMP Block threading operation took: 0.219792 seconds.
+The OpenMP Naive threading operation took: 0.00613129 seconds.
+The OpenMP Diagonal threading operation took: 0.00553445 seconds.
+The OpenMP Block threading operation took: 0.00460596 seconds.
 Matrix size: 4096
-The OpenMP Naive threading operation took: 0.0336787 seconds.
-The OpenMP Diagonal threading operation took: 0.0390161 seconds.
-The OpenMP Block threading operation took: 0.924346 seconds.
+The OpenMP Naive threading operation took: 0.0257054 seconds.
+The OpenMP Diagonal threading operation took: 0.023539 seconds.
+The OpenMP Block threading operation took: 0.0219884 seconds.
 Matrix size: 16384
-The OpenMP Naive threading operation took: 1.13464 seconds.
-The OpenMP Diagonal threading operation took: 0.967339 seconds.
-The OpenMP Block threading operation took: 15.3182 seconds.
-
-
-
-swbsutg01@hornet01:~/Lab2$ g++ -fopenmp -lgomp OpenMP.cpp -O3 -o OpenMP
-swbsutg01@hornet01:~/Lab2$ ./OpenMP
-Matrix size: 128
-The OpenMP Naive threading operation took: 0.00355656 seconds.
-The OpenMP Diagonal threading operation took: 0.00336264 seconds.
-The OpenMP Block threading operation took: 0.00360897 seconds.
-Matrix size: 1024
-The OpenMP Naive threading operation took: 0.00231868 seconds.
-The OpenMP Diagonal threading operation took: 0.00389491 seconds.
-The OpenMP Block threading operation took: 0.0575206 seconds.
-Matrix size: 2048
-The OpenMP Naive threading operation took: 0.00820541 seconds.
-The OpenMP Diagonal threading operation took: 0.00933764 seconds.
-The OpenMP Block threading operation took: 0.22385 seconds.
-Matrix size: 4096
-The OpenMP Naive threading operation took: 0.0370709 seconds.
-The OpenMP Diagonal threading operation took: 0.0362342 seconds.
-The OpenMP Block threading operation took: 0.909069 seconds.
-Matrix size: 16384
-The OpenMP Naive threading operation took: 1.29729 seconds.
-The OpenMP Diagonal threading operation took: 1.00142 seconds.
-The OpenMP Block threading operation took: 15.381 seconds.
+The OpenMP Naive threading operation took: 1.24145 seconds.
+The OpenMP Diagonal threading operation took: 1.21454 seconds.
+The OpenMP Block threading operation took: 0.438992 seconds.
