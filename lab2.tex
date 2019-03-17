@@ -92,6 +92,8 @@ The diagonal outperforms the naive implementation due to the decrease in overhea
 OpenMP outperforms Pthreads for each implementation.
 OpenMP is better optimized than Pthreads for the C++ language, resulting in this difference.
 
+The Pthread block algorithm did not perform very well due to the way in which the threads were generated and how the memory was being allocated. A better way to perform the task is to create a queue of data which is supplied to a set number of threads. Once a thread is no longer actively running, it is assigned a new task until the transposition is completed. 
+
 \section{Pseudocode}
 
 
